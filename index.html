@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tone Match">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1c2129">
+<title>Tone Match</title>
+<link rel="apple-touch-icon" id="icon" href="">
+<style>
+:root{--bg:#1c2129;--card:#262d37;--ink:#f1f4f7;--mute:#9aa5b1;--line:#3a4350;--acc:#33ccf2;--accink:#06222b;--field:#171c23;color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,system-ui,"Helvetica Neue",Arial,sans-serif;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+.hd{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px}
+h1{margin:0;font-size:22px;letter-spacing:.06em;color:var(--acc)}
+h2{font-size:16px;color:var(--acc);text-align:center;margin:18px 0 10px}
+.ic{background:none;border:0;color:var(--ink);font-size:22px;padding:6px}
+.card{background:var(--card);border-radius:10px;padding:14px;margin:0 0 12px}
+input,textarea{display:block;width:100%;margin:0 0 10px;padding:12px;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px}
+select{display:block;width:100%;margin:0 0 10px;padding:12px;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px}
+label{display:block;font-size:13px;color:var(--mute);margin:0 0 4px}
+.seg{display:flex;margin:0 0 10px}
+.seg button{flex:1;padding:11px;font:inherit;font-weight:600;color:var(--ink);background:var(--field);border:1px solid var(--line)}
+.seg button:first-child{border-radius:8px 0 0 8px}.seg button:last-child{border-radius:0 8px 8px 0}
+.seg button.on{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.sug{margin:-6px 0 10px;border-radius:8px;overflow:hidden}
+.si{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px;background:var(--card);color:var(--ink);border:0;border-bottom:1px solid var(--line);font:inherit;font-size:15px}
+.si img{width:40px;height:40px;border-radius:4px;flex:none;background:var(--line)}
+.si small{display:block;color:var(--mute)}
+.chip{display:flex;align-items:center;justify-content:space-between;background:var(--field);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0 0 6px;font-size:15px}
+.chip button{background:none;border:0;color:var(--mute);font-size:20px;padding:0 4px}
+.ok{font-size:13px;color:var(--acc);margin:-4px 0 10px}
+#go{width:100%;padding:14px;font:inherit;font-weight:700;letter-spacing:.04em;color:var(--accink);background:var(--acc);border:0;border-radius:8px;margin:0 0 12px}
+#go:disabled{opacity:.6}
+#err{color:#ff7b7b;font-size:14px;margin:0 0 12px;white-space:pre-wrap}
+.note{font-size:14px;white-space:pre-wrap}
+.mute{color:var(--mute);text-align:center}
+.tabs{display:flex;margin:0 0 6px;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;padding:12px;font:inherit;font-weight:700;letter-spacing:.06em;color:var(--ink);background:none;border:0;border-bottom:3px solid transparent}
+.tabs button.on{color:var(--acc);border-bottom-color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 6px;margin:0 0 16px}
+.knob{text-align:center}
+.knob svg{width:84px;height:84px}
+.knob circle{fill:none;stroke-width:6;stroke-linecap:round;transform:rotate(135deg);transform-origin:40px 40px}
+.knob .tr{stroke:var(--line)}.knob .vl{stroke:var(--acc)}
+.knob text{fill:var(--ink);font:700 20px -apple-system,system-ui,sans-serif}
+.kn{font-size:12px;color:var(--mute);text-transform:uppercase}
+.row{background:color-mix(in srgb,var(--c) 38%,var(--card));border-radius:8px;padding:12px;margin:0 0 8px}
+.row.off{background:color-mix(in srgb,var(--c) 10%,var(--card));opacity:.8}
+.top{display:flex;align-items:center;gap:10px}
+.dot{width:30px;height:30px;border-radius:50%;background:var(--c);flex:none}
+.off .dot{background:var(--line)}
+.nm{flex:1;display:flex;flex-direction:column}.nm small{color:var(--mute)}
+.st{font-size:14px}.off .st{color:#ff7b7b}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;margin-top:10px}
+.pp{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.pp span{opacity:.75}.pp.set b{color:var(--acc)}
+.nt{font-size:13px;color:var(--mute);margin-top:6px}
+.key{display:none}.key.open{display:block}
+.key a{color:var(--acc)}
+.small{font-size:13px;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd"><h1>TONE MATCH</h1><button class="ic" id="gear" aria-label="API-kulcs">🔑</button></div>
+
+  <div class="card key" id="key">
+    <label for="k">Google Gemini API-kulcs (ingyenes)</label>
+    <input id="k" type="password" autocomplete="off" placeholder="AIza...">
+    <p class="small">aistudio.google.com → Get API key. A kulcsot csak ezen az eszközön, a böngészőben tárolja az oldal, és csak a Google felé megy el. Minden eszközön külön kell megadni.</p>
+    <label for="think">Gondolkodás (gyorsaság és alaposság)</label>
+    <select id="think"><option value="minimal">minimal (leggyorsabb)</option><option value="low" selected>low (gyors)</option><option value="medium">medium</option><option value="high">high (leglassabb, legalaposabb)</option></select>
+    <button id="ksave" style="width:100%;padding:12px;font:inherit;font-weight:700;color:var(--accink);background:var(--acc);border:0;border-radius:8px">Mentés</button>
+  </div>
+
+  <div class="card">
+    <label for="song">Szám vagy előadó</label><input id="song" autocomplete="off" placeholder="pl. Sweet Child O’ Mine">
+    <div class="seg" id="seg"><button class="on" data-v="Gitár">Gitár</button><button data-v="Basszusgitár">Basszusgitár</button></div>
+    <label for="guitar">Hangszered</label><input id="guitar" autocomplete="off" placeholder="pl. Stratocaster, Les Paul">
+    <label for="mode">Felállás</label>
+    <select id="mode">
+      <option value="fxPhones">Csak multi-FX + fülhallgató</option>
+      <option value="fxAmp" selected>Multi-FX az erősítőre kötve</option>
+      <option value="ampOnly">Csak erősítő (+ pedálok)</option>
+    </select>
+    <div id="wAmp"><label for="amp">Erősítő</label><input id="amp" autocomplete="off" placeholder="pl. Marshall Valvestate 8080"></div>
+    <div id="wFx"><label for="fx">Multi-FX</label><input id="fx" autocomplete="off" placeholder="pl. Boss Katana:GO, GT-1"></div>
+    <label for="ped">Extra pedálok</label><input id="ped" autocomplete="off" placeholder="Pedál hozzáadása (pl. Tube Screamer)">
+    <div id="chips"></div>
+  </div>
+  <button id="go">BEÁLLÍTÁS KERESÉSE</button>
+  <p id="err"></p>
+  <div id="out"></div>
+</div>
+<script>
+const DB={"guitars": ["Fender Stratocaster", "Fender Telecaster", "Fender Jazzmaster", "Fender Jaguar", "Fender Mustang", "Squier Stratocaster", "Squier Telecaster", "Gibson Les Paul Standard", "Gibson Les Paul Custom", "Gibson Les Paul Junior", "Gibson SG", "Gibson ES-335", "Gibson ES-175", "Gibson Flying V", "Gibson Explorer", "Gibson Firebird", "Epiphone Les Paul", "Epiphone Casino", "Epiphone SG", "PRS Custom 24", "PRS McCarty", "PRS SE", "Ibanez RG", "Ibanez JEM", "Ibanez S", "Ibanez Iceman", "Jackson Soloist", "Jackson Rhoads", "Jackson King V", "ESP Eclipse", "ESP Horizon", "ESP LTD EC-1000", "Schecter C-1", "Gretsch White Falcon", "Gretsch Duo Jet", "Gretsch 6120", "Rickenbacker 330", "Rickenbacker 360/12", "Danelectro 59", "Charvel San Dimas", "Kramer Baretta", "EVH Frankenstrat", "Yamaha Pacifica", "Steinberger GL", "Parker Fly", "Martin D-28 (akusztikus)", "Taylor 814ce (akusztikus)", "Gibson J-45 (akusztikus)"], "basses": ["Fender Precision Bass", "Fender Jazz Bass", "Fender Mustang Bass", "Squier Classic Vibe Precision", "Music Man StingRay", "Music Man Sterling", "Rickenbacker 4003", "Hofner Violin Bass", "Gibson EB-3", "Gibson Thunderbird", "Epiphone Thunderbird", "Ibanez SR", "Ibanez Soundgear", "Warwick Thumb", "Warwick Corvette", "Yamaha BB", "Yamaha TRBX", "Spector NS-2", "Lakland 44-64", "Sadowsky NYC", "Fodera Emperor", "G&L L-2000", "Dingwall Combustion", "Danelectro Longhorn", "Steinberger XT-2", "Fender Jaco Pastorius Fretless"], "amps": ["Marshall JCM800 2203", "Marshall JCM900", "Marshall JCM2000 DSL", "Marshall JVM410H", "Marshall Plexi Super Lead 1959", "Marshall JTM45", "Marshall Silver Jubilee 2555", "Marshall Valvestate 8080", "Marshall Valvestate 8100", "Marshall Valvestate 8240", "Marshall Valvestate VS100", "Marshall MG30", "Marshall MG100", "Marshall Origin", "Marshall DSL40", "Fender Twin Reverb", "Fender Deluxe Reverb", "Fender Princeton Reverb", "Fender Super Reverb", "Fender '59 Bassman", "Fender Champ", "Fender Blues Junior", "Fender Hot Rod Deluxe", "Fender Vibro-King", "Fender Mustang", "Fender Frontman", "Vox AC30", "Vox AC15", "Vox AC10", "Orange Rockerverb", "Orange Tiny Terror", "Orange Rocker 15", "Orange Dark Terror", "Orange OR50", "Orange Crush", "Mesa/Boogie Dual Rectifier", "Mesa/Boogie Triple Rectifier", "Mesa/Boogie Mark IV", "Mesa/Boogie Mark V", "Mesa/Boogie Lone Star", "Peavey 5150", "Peavey 6505", "Peavey Bandit", "Peavey Classic 30", "Peavey Valveking", "Peavey Triple XXX", "EVH 5150III", "Engl Powerball", "Engl Fireball", "Engl Savage 120", "Bogner Ecstasy", "Bogner Überschall", "Soldano SLO-100", "Dumble Overdrive Special", "Hiwatt DR103", "Laney VH100R", "Laney Cub", "Laney Ironheart", "Randall RG100", "Randall Warhead", "Roland JC-120 Jazz Chorus", "Boss Katana 50", "Boss Katana 100", "Boss Katana Mini", "Boss Katana Air", "Blackstar HT-5", "Blackstar HT-20", "Blackstar ID:Core", "Line 6 Spider V", "Line 6 Spider IV", "Yamaha THR10", "Hughes & Kettner TriAmp", "Diezel Herbert", "Diezel VH4", "Friedman BE-100", "Dr. Z Maz 38", "Matchless DC-30", "Bad Cat Hot Cat", "Supro 1696T", "Ampeg SVT", "Ampeg SVT-CL", "Ampeg B-15 Portaflex", "Ampeg BA-115", "Orange OB1-300", "Gallien-Krueger 800RB", "Markbass Little Mark", "Aguilar Tone Hammer", "Fender Rumble", "Trace Elliot AH500", "Hartke HA3500", "Sunn Model T", "Traynor YBA-1", "Acoustic 360"], "multifx": ["Boss Katana:GO", "Boss GT-1", "Boss GT-1000", "Boss GT-1000 Core", "Boss GT-100", "Boss GT-10", "Boss GT-8", "Boss GX-100", "Boss ME-80", "Boss ME-90", "Boss ME-50", "Boss GT-001", "Boss GT-1B (basszus)", "Line 6 HX Stomp", "Line 6 HX Stomp XL", "Line 6 Helix", "Line 6 Helix LT", "Line 6 Helix Floor", "Line 6 Pod Go", "Line 6 POD HD500X", "Line 6 POD HD300", "Line 6 POD XT", "Zoom G1 Four", "Zoom G1X Four", "Zoom G3Xn", "Zoom G5n", "Zoom G6", "Zoom B1 Four (basszus)", "Zoom MS-70CDR", "Fractal Axe-Fx II", "Fractal Axe-Fx III", "Fractal FM3", "Fractal FM9", "Fractal AX8", "Kemper Profiler", "Neural DSP Quad Cortex", "Neural DSP Nano Cortex", "Headrush Pedalboard", "Headrush MX5", "Headrush Prime", "Mooer GE150", "Mooer GE200", "Mooer GE250", "Mooer GE300", "Mooer Preamp Live", "NUX MG-30", "NUX MG-300", "NUX Trident", "Valeton GP-200", "Valeton GP-100", "Hotone Ampero", "Hotone Ampero II Stomp", "Digitech RP55", "Digitech RP90", "Digitech RP155", "Digitech RP360", "Digitech RP500", "Digitech GSP1101", "Vox StompLab IIG", "Vox Tonelab ST", "Sonicake Pocket Master", "Line 6 Pod Go Wireless"], "pedals": ["Ibanez Tube Screamer TS808", "Ibanez Tube Screamer TS9", "Ibanez TS-10", "Ibanez TS Mini", "Maxon OD808", "Maxon SD9", "Boss SD-1 Super Overdrive", "Boss OD-1", "Boss OD-3", "Boss BD-2 Blues Driver", "Boss DS-1 Distortion", "Boss DS-2 Turbo Distortion", "Boss MT-2 Metal Zone", "Boss HM-2 Heavy Metal", "Boss CE-1 Chorus Ensemble", "Boss CE-2 Chorus", "Boss CH-1 Super Chorus", "Boss BF-2 Flanger", "Boss PH-3 Phase Shifter", "Boss TR-2 Tremolo", "Boss DD-3 Digital Delay", "Boss DD-7 Digital Delay", "Boss DD-8 Digital Delay", "Boss RV-6 Reverb", "Boss RV-500", "Boss GE-7 Equalizer", "Boss NS-2 Noise Suppressor", "Boss CS-3 Compressor", "Boss PS-6 Harmonist", "Boss SY-1 Synthesizer", "Boss AW-3 Dynamic Wah", "Boss RC-1 Loop Station", "Boss RC-5 Loop Station", "Boss TU-3 Tuner", "Boss DM-2 Delay", "ProCo RAT", "ProCo RAT 2", "Electro-Harmonix Big Muff Pi", "Electro-Harmonix Small Clone", "Electro-Harmonix Memory Man", "Electro-Harmonix Holy Grail", "Electro-Harmonix Soul Food", "Electro-Harmonix Electric Mistress", "Electro-Harmonix POG", "Electro-Harmonix Cathedral", "Electro-Harmonix 2880", "Dunlop Cry Baby Wah", "Dunlop Cry Baby 535Q", "Dunlop Rotovibe", "Dunlop Uni-Vibe", "Dunlop Fuzz Face", "MXR Phase 90", "MXR Phase 45", "MXR Phase 100", "MXR Script Phase 90", "MXR Dyna Comp", "MXR Distortion+", "MXR Carbon Copy", "MXR Micro Amp", "MXR Smart Gate", "MXR Flanger M117R", "MXR Six Band EQ", "Dallas Arbiter Fuzz Face", "Vox V847 Wah", "Vox V846 Wah", "Tone Bender MKII", "Univox Super-Fuzz", "Maestro FZ-1 Fuzz-Tone", "Klon Centaur", "Wampler Pantheon", "Wampler Plexi-Drive", "Fulltone OCD", "Fulltone Full-Drive 2", "Fulltone '69 Fuzz", "Way Huge Pork Loin", "Way Huge Swollen Pickle", "Zvex Fuzz Factory", "Zvex Box of Rock", "JHS Morning Glory", "JHS Angry Charlie", "JHS Pulp N Peel", "Strymon Timeline", "Strymon BigSky", "Strymon Mobius", "Strymon El Capistan", "Strymon Flint", "Strymon Deco", "Strymon Brigadier", "TC Electronic Flashback", "TC Electronic Hall of Fame", "TC Electronic Corona Chorus", "TC Electronic Polytune", "Digitech Whammy", "Digitech Whammy V", "Digitech Screamin' Blues", "Ibanez CS9 Stereo Chorus", "Ibanez DE7 Delay", "Line 6 DL4", "Line 6 MM4", "Line 6 FM4", "Mu-Tron III", "Morley Bad Horsie Wah", "Eventide H9", "Eventide TimeFactor", "Eventide PitchFactor", "Roland RE-201 Space Echo", "Echoplex EP-3", "Danelectro Fab Chorus", "Walrus Audio Slö", "Walrus Audio Voyager", "Behringer SF300", "Behringer UM300", "Fender Blender", "Ditto Looper", "Boss Wah PW-3", "Octavia", "Tube Screamer (általános)", "Noise gate (általános)", "Kompresszor (általános)", "Boost (általános)", "Ampeg SCR-DI (basszus)", "Boss ODB-3 (basszus)", "MXR M80 Bass D.I.+ (basszus)", "Darkglass Microtubes B7K (basszus)", "Sansamp Bass Driver DI (basszus)", "EBS Octabass (basszus)"]};
+const $=id=>document.getElementById(id);
+const LG=k=>{try{return localStorage.getItem(k)||""}catch(e){return ""}};
+const LS=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const S={instr:"Gitár",tab:0,p:null,pedals:[],picked:null};
+const MODES={fxPhones:"Csak multi-FX + fülhallgató",fxAmp:"Multi-FX az erősítőre kötve",ampOnly:"Csak erősítő (+ pedálok)"};
+const SYS=`Te gitár- és basszushang-szakértő vagy. A megadott számhoz told össze, milyen erősítőt, pedálokat és beállításokat használt az előadó a felvételen (keress rá, ha van keresőd; ha nem biztos, becsüld és jelezd), majd fordítsd le a hangzást a felhasználó saját felszerelésére.
+CSAK egyetlen JSON objektumot adj vissza, magyar szöveggel, ebben a sémában:
+{"rig":"az eredeti felvétel felszerelése és a hangzás leírása (becslést jelezd)","amp":{"model":"a felhasználó erősítője vagy multi-FX amp modellje","channel":"csatorna/mód","knobs":[{"name":"Gain","value":6.5,"max":10}]},"pedals":[{"name":"pedál neve","type":"boost/drive/mod/delay/reverb/wah/comp/noise gate/eq/egyéb","on":true,"params":[{"name":"Threshold","value":"-45 dB","set":true}],"note":"opcionális megjegyzés"}],"guitar":"hangszer beállítása: pickup állás, hangerő, tone","tips":"játéktechnika, extra tippek","confidence":"magas/közepes/alacsony"}
+Szabályok:
+- Az erősítő MINDEN gombját add meg a knobs-ban (pl. Gain, Volume, Bass, Middle, Treble, Presence, Reverb, Master, Resonance, ami az adott erősítőn van), a valódi skálán (0-10 vagy 0-100), a "max" ezt mutassa.
+- Minden BEKAPCSOLT pedálnál (on:true) a params tartalmazza az adott pedál vagy effekt blokk ÖSSZES szabályozóját, akkor is, ha ahhoz a számhoz nem kell állítani. Például noise gate: Threshold, Release, Decay, Detect stb.; EQ: minden sáv frekvenciával és dB-értékkel (5 sávos EQ-nál mind az 5 sáv, plusz Level); delay: Time, Feedback, Level, Tone stb.; torzító: Drive, Tone, Level és minden más gomb vagy kapcsoló. A valódi paraméterneveket és skálát használd, az értékek mindig szövegek (mértékegységgel).
+- set:true annál a paraméternél, amit ehhez a számhoz tudatosan kell beállítani; set:false annál, ami semleges vagy alapérték.
+- Kikapcsolt pedálnál on:false, a note legyen "OFF – nem kell", params üres lehet.
+- Minden pedált a felhasználó jelláncának sorrendjében add meg. Fülhallgatós multi-FX módban az amp a multi-FX amp modellje. Multi-FX→erősítő módban az amp a felhasználó erősítője (semleges alapra), a hatások a multi-FX blokkjaiban vannak.
+- Ha a számban nincs elektromos gitár vagy basszusgitár, írd meg a rig mezőben, az amp legyen null, a pedals üres.
+- Ne találj ki olyan gombot, csatornát vagy kapcsolót, ami az adott eszközön nincs; ha nem vagy biztos az eszköz kezelőszerveiben, jelezd a note mezőben.
+- confidence: magas = az előadó felszerelése jól dokumentált (interjúk, stúdiójegyzetek), közepes = részben ismert, alacsony = főleg becslés.
+JSON-on kívül ne írj semmit.`;
+
+function el(t,c,...k){const e=document.createElement(t);if(c)e.className=c;k.flat().filter(x=>x!=null&&x!==false).forEach(x=>e.append(x));return e}
+const norm=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+function match(o,q){const w=norm(q).split(/\s+/).filter(Boolean);return o.filter(x=>{const n=norm(x);return w.every(y=>n.includes(y))}).slice(0,6)}
+function save(){const o={instr:S.instr,pedals:S.pedals};["song","guitar","mode","amp","fx"].forEach(i=>o[i]=$(i).value);LS("tm",JSON.stringify(o))}
+function load(){try{const o=JSON.parse(LG("tm")||"{}");["song","guitar","mode","amp","fx"].forEach(i=>{if(o[i]!=null)$(i).value=o[i]});if(o.pedals)S.pedals=o.pedals;if(o.instr)setInstr(o.instr)}catch(e){}}
+function setInstr(v){S.instr=v;document.querySelectorAll("#seg button").forEach(b=>b.classList.toggle("on",b.dataset.v===v))}
+function vis(){const m=$("mode").value;$("wAmp").style.display=m==="fxPhones"?"none":"";$("wFx").style.display=m==="ampOnly"?"none":""}
+function pc(t){t=String(t).toLowerCase();return /boost|drive|dist|fuzz/.test(t)?"#e8912d":/delay/.test(t)?"#7b8794":/reverb/.test(t)?"#1f9d8f":/mod|chorus|flang|phas|trem/.test(t)?"#8a4fa8":/eq|gate|comp/.test(t)?"#4a8f5a":"#3f7fd0"}
+
+/* ajánlás gépelés közben */
+function attach(inp,items,render,pick){
+  const box=el("div","sug");inp.after(box);
+  const show=()=>{box.replaceChildren(...items(inp.value).map(it=>{const b=el("button","si");render(b,it);b.type="button";b.onclick=()=>{pick(it);if(!inp.dataset.keep)box.replaceChildren()};return b}))};
+  inp.addEventListener("input",show);inp.addEventListener("focus",show);
+  inp.addEventListener("blur",()=>setTimeout(()=>box.replaceChildren(),250));
+  return {show,box};
+}
+function listAttach(id,getOpts){attach($(id),q=>match(getOpts(),q),(b,o)=>b.textContent=o,o=>{$(id).value=o;save()})}
+function chips(){const c=$("chips");c.replaceChildren(...S.pedals.map(p=>{const b=el("button",0,"×");b.onclick=()=>{S.pedals=S.pedals.filter(x=>x!==p);chips();save()};return el("div","chip",el("span",0,p),b)}))}
+function addPedal(n){n=n.trim();if(n&&!S.pedals.includes(n))S.pedals.push(n);$("ped").value="";chips();save()}
+
+/* dalkeresés: iTunes Search API (JSONP) */
+function jsonp(q){return new Promise(res=>{const cb="__it"+Date.now(),s=document.createElement("script");const done=r=>{delete window[cb];s.remove();res(r)};window[cb]=d=>done(d.results||[]);s.onerror=()=>done([]);s.src="https://itunes.apple.com/search?media=music&entity=song&limit=8&callback="+cb+"&term="+encodeURIComponent(q);document.head.append(s);setTimeout(()=>done([]),6000)})}
+async function songsterr(q){try{const r=await fetch("https://www.songsterr.com/api/songs?size=10&pattern="+encodeURIComponent(q));const d=await r.json();return d.map(x=>({trackName:x.title,artistName:typeof x.artist==="string"?x.artist:(x.artist&&x.artist.name)||""})).filter(x=>x.artistName)}catch(e){return []}}
+let tm,seq=0,songBox;
+function songInit(){
+  const inp=$("song");let hits=[];
+  const a=attach(inp,()=>hits,(b,h)=>{const i=el("img");i.src=h.artworkUrl60||"";b.append(i,el("span",0,h.trackName,el("small",0,h.artistName)))},h=>{inp.value=h.trackName;S.picked=h;$("ok").textContent="✓ "+h.artistName;save()});
+  songBox=a;
+  inp.addEventListener("input",()=>{S.picked=null;$("ok").textContent="";clearTimeout(tm);const q=inp.value.trim();if(q.length<2){hits=[];a.show();return}
+    tm=setTimeout(async()=>{const n=++seq,[s,r]=await Promise.all([songsterr(q),jsonp(q)]);if(n===seq){const seen=new Set();hits=s.concat(r).filter(h=>{const k=(h.trackName+"|"+h.artistName).toLowerCase();return !seen.has(k)&&seen.add(k)}).slice(0,10);a.show()}},300)});
+}
+function songText(){const p=S.picked,v=$("song").value.trim();return p&&p.trackName===v?p.trackName+" – "+p.artistName:v}
+
+/* megjelenítés */
+function knob(k){
+  const v=Number(k.value)||0,C=2*Math.PI*32,f=Math.min(Math.max(v/Math.max(Number(k.max)||10,1),0),1),w=el("div","knob");
+  w.innerHTML=`<svg viewBox="0 0 80 80"><circle class="tr" cx="40" cy="40" r="32" stroke-dasharray="${.75*C} ${C}"/><circle class="vl" cx="40" cy="40" r="32" stroke-dasharray="${.75*C*f} ${C}"/><text x="40" y="47" text-anchor="middle"></text></svg>`;
+  w.querySelector("text").textContent=Number.isInteger(v)?v:v.toFixed(1);
+  w.append(el("div","kn",String(k.name)));return w;
+}
+function row(p){
+  const on=p.on!==false,r=el("div","row"+(on?"":" off"));r.style.setProperty("--c",pc(p.type));
+  r.append(el("div","top",el("span","dot"),el("div","nm",el("b",0,String(p.name)),el("small",0,String(p.type||""))),el("b","st",on?"ON":"OFF")));
+  if(on&&(p.params||[]).length){const g=el("div","pg");p.params.forEach(x=>g.append(el("div","pp"+(x.set?" set":""),el("span",0,String(x.name)),el("b",0,String(x.value)))));r.append(g)}
+  if(p.note)r.append(el("div","nt",String(p.note)));return r;
+}
+function render(){
+  const p=S.p,o=$("out");o.replaceChildren();if(!p)return;
+  o.append(el("div","card note",(p.confidence?"Megbízhatóság: "+p.confidence+"\n\n":"")+String(p.rig)));
+  if(S.cache){const cb=el("button","ic","Mentett eredmény · ÚJRAGENERÁLÁS");cb.style.cssText="display:block;margin:0 auto 12px;font-size:13px;color:var(--acc)";cb.onclick=()=>go(true);o.append(cb)}
+  if(S.ms!=null)o.append(el("p","mute","⏱ "+(S.cache?"azonnal (mentett eredmény)":(S.ms/1000).toFixed(1).replace(".",",")+" mp · "+S.model+" · gondolkodás: "+(LG("tm_think")||"low"))));
+  const tabs=el("div","tabs");
+  ["AMP","EFFEKTEK"].forEach((n,i)=>{const b=el("button",S.tab===i?"on":"",n);b.onclick=()=>{S.tab=i;render()};tabs.append(b)});o.append(tabs);
+  if(S.tab===0){
+    if(p.amp){o.append(el("h2",0,p.amp.model+(p.amp.channel?" · "+p.amp.channel:"")));const g=el("div","grid");(p.amp.knobs||[]).forEach(k=>g.append(knob(k)));o.append(g)}
+    else o.append(el("p","mute","Ebben a felállásban nincs külön erősítő."));
+  }else{const w=el("div");w.style.marginTop="10px";(p.pedals||[]).forEach(x=>w.append(row(x)));o.append(w)}
+  o.append(el("div","card note","🎸 "+p.guitar+"\n\n"+p.tips));
+}
+
+/* Gemini-hívás közvetlenül a böngészőből, gyorsítótárral és tartalék modellekkel */
+const MODELS=["gemini-3.8-flash","gemini-3.5-flash","gemini-3.1-flash-lite"];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function cacheGet(k){try{return JSON.parse(localStorage.getItem("tmCache")||"{}")[k]||null}catch(e){return null}}
+function cachePut(k,v){try{const d=JSON.parse(localStorage.getItem("tmCache")||"{}"),ks=Object.keys(d);if(ks.length>=300)delete d[ks[0]];d[k]=v;localStorage.setItem("tmCache",JSON.stringify(d))}catch(e){}}
+async function callGemini(model,prompt,thinking){
+  const gc={maxOutputTokens:32768,responseMimeType:"application/json"};
+  if(thinking)gc.thinkingConfig={thinkingLevel:LG("tm_think")||"low"};
+  const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+model+":generateContent",{method:"POST",headers:{"content-type":"application/json","x-goog-api-key":LG("tm_key")},body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:gc})});
+  const j=await r.json();
+  if(j.error)throw new Error(j.error.message||"API hiba");
+  const c=(j.candidates||[])[0],t=((c&&c.content&&c.content.parts)||[]).map(x=>x.text||"").join("");
+  const i=t.indexOf("{"),k=t.lastIndexOf("}");
+  if(i<0||k<0)throw new Error("Nem jött használható válasz, próbáld újra.");
+  let p;try{p=JSON.parse(t.slice(i,k+1))}catch(e){throw new Error("A válasz formátuma hibás, próbáld újra.")}
+  cachePut(prompt.toLowerCase(),p);S.model=model;return p;
+}
+async function askModel(model,prompt){
+  try{return await callGemini(model,prompt,true)}
+  catch(e){if(/thinking/i.test(e.message))return await callGemini(model,prompt,false);throw e}
+}
+async function fetchPreset(prompt,force){
+  if(!force){const c=cacheGet(prompt.toLowerCase());if(c)return [c,true]}
+  let last;
+  for(const m of MODELS)for(let a=0;a<2;a++){
+    try{return [await askModel(m,prompt),false]}
+    catch(e){last=e;if(!/demand|overload|unavailable|try again|quota|exhausted|timed out/i.test(e.message||""))throw e;if(a===0)await sleep(3000)}
+  }
+  throw last;
+}
+async function go(force){
+  const err=$("err"),b=$("go");err.textContent="";
+  if(!LG("tm_key")){$("key").classList.add("open");err.textContent="Előbb add meg az API-kulcsot.";return}
+  if(!songText()){err.textContent="Add meg a szám címét.";return}
+  save();const m=$("mode").value;
+  const prompt=`Szám: ${songText()}\nHangszer: ${S.instr}, típusa: ${$("guitar").value}\nFelállás: ${MODES[m]}\nErősítő: ${m==="fxPhones"?"-":$("amp").value}\nMulti-FX: ${m==="ampOnly"?"-":$("fx").value}\nExtra pedálok: ${S.pedals.join(", ")||"nincs"}`;
+  const t0=performance.now();S.ms=null;b.disabled=true;b.textContent="KERESÉS… (akár 1 perc)";S.p=null;render();
+  try{const r=await fetchPreset(prompt,force===true);S.p=r[0];S.cache=r[1];S.ms=performance.now()-t0;S.tab=0;render()}
+  catch(e){err.textContent="Nem sikerült: "+(e.message||e)}
+  b.disabled=false;b.textContent="BEÁLLÍTÁS KERESÉSE";
+}
+
+/* ikon és indulás */
+function icon(){const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d");x.fillStyle="#1c2129";x.fillRect(0,0,180,180);x.strokeStyle="#33ccf2";x.lineWidth=12;x.lineCap="round";x.beginPath();x.arc(90,90,52,Math.PI*.75,Math.PI*2.25);x.stroke();x.fillStyle="#f1f4f7";x.font="bold 48px -apple-system,sans-serif";x.textAlign="center";x.fillText("TM",90,106);$("icon").href=c.toDataURL("image/png")}
+document.querySelectorAll("#seg button").forEach(b=>b.onclick=()=>{setInstr(b.dataset.v);save()});
+$("mode").onchange=()=>{vis();save()};$("go").onclick=go;
+$("gear").onclick=()=>{$("k").value=LG("tm_key");$("think").value=LG("tm_think")||"low";$("key").classList.toggle("open")};
+$("ksave").onclick=()=>{LS("tm_key",$("k").value.trim());LS("tm_think",$("think").value);$("key").classList.remove("open")};
+$("song").after(el("div","ok"));$("song").nextSibling.id="ok";
+songInit();
+listAttach("guitar",()=>S.instr==="Gitár"?DB.guitars:DB.basses);listAttach("amp",()=>DB.amps);listAttach("fx",()=>DB.multifx);
+const pa=attach($("ped"),q=>match(DB.pedals,q),(b,o)=>b.textContent=o,addPedal);
+$("ped").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addPedal($("ped").value)}});
+load();vis();chips();icon();
+if(!LG("tm_key"))$("key").classList.add("open");
+</script>
+</body>
+</html>
